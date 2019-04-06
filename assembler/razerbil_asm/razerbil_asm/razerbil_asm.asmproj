@@ -15,7 +15,7 @@
     <Name>razerbil_asm</Name>
     <RootNamespace>razerbil_asm</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
-    <EntryFile>$(MSBuildProjectDirectory)\main.asm</EntryFile>
+    <EntryFile>$(MSBuildProjectDirectory)\portPWM.asm</EntryFile>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
@@ -54,7 +54,13 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="main.asm">
+    <Compile Include="pinLED.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="portPWM.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="portPWMpb3.asm">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
