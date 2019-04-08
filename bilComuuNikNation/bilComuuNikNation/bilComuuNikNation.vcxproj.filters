@@ -15,16 +15,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MainFile.cpp">
+    <ClInclude Include="SerialPort.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="testClass.cpp">
+    <ClCompile Include="SerialPort.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="testClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <None Include="WinSerialPort.cppx">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="LinuxSerialPort.cppx">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
