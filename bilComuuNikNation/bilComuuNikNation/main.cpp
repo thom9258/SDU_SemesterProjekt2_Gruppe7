@@ -19,11 +19,10 @@ int main()
 
     // Flush
     serial.clean();
-
-    for (unsigned char i = 0; i < 255; ++i) {
-        char c[1];
-        c[0] = '+';//static_cast<char>(i);
-        serial.write(c, 1);
+		char x[128];
+		std::cin >> x;
+		c[0] = x;//static_cast<char>(i);
+		serial.write(c, 1);
 #ifdef _WIN32
         Sleep(100);
 #else
@@ -33,8 +32,8 @@ int main()
         serial.read(buf, 1);
         //std::cout << (int) buf[0] << "\t" << (int) buf[1] << "\t" << (int) buf[2] << std::endl;
         std::cout << static_cast<int>(buf[0]) << std::endl;
-    }
-
+		Sleep(1000);
     serial.close();
+	return 0;
 }
 
