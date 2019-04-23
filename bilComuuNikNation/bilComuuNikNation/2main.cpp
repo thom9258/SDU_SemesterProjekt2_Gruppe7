@@ -36,5 +36,6 @@ int andet()
 	}
 
 	serial.close();
+	return 0;
 }
 

@@ -22,6 +22,7 @@
     <ClInclude Include="SerialPort.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\..\claus%27 PC\source\repos\SDU_SemesterProjekt2_Gruppe7\bilComuuNikNation\bilComuuNikNation\2main.cpp" />
     <ClCompile Include="dataTilAtmega.cpp" />
     <ClCompile Include="SerialPort.cpp" />
   </ItemGroup>
