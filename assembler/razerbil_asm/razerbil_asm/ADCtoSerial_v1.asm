@@ -30,24 +30,24 @@ SETUP:
 	OUT		UCSRA,	R16	
 
 
-	;Slå seriel kommunikation og recieve interrupts til
+	;SlÃ¥ seriel kommunikation og recieve interrupts til
 	LDI		R16,	(1<<RXEN)|(1<<TXEN)|(1<<RXCIE)
 	OUT		UCSRB,	R16
 
-	;Brug UCSRC, sæt frame size = 8
+	;Brug UCSRC, sÃ¦t frame size = 8
 	LDI		R16,	(1<<URSEL)|(1<<UCSZ1)|(1<<UCSZ0)
 	OUT		UCSRC,	R16
 
-	;Sæt baud rate = 9600 
+	;SÃ¦t baud rate = 9600 
 	LDI		R16,	12		;UBRR LSB
 	OUT		UBRRL,	R16
 
 	; ADC Setup
-	LDI R16, 0b11100010 ; intern ref spænding, auto trigger til, gemmer 8 msb bits, læs fra PA2
+	LDI R16, 0b11100010 ; intern ref spÃ¦nding, auto trigger til, gemmer 8 msb bits, lÃ¦s fra PA2
 	OUT ADMUX, R16
 
-	LDI R16, 0b11100011 ; enable adc, start adc, ingen autotrigger, prescaler på 1/8
-	; vi bruger en prescaler på 1/8 for at holde den under dens ADC converterns maksimale clock frekvens på 200 kHz
+	LDI R16, 0b11100011 ; enable adc, start adc, ingen autotrigger, prescaler pÃ¥ 1/8
+	; vi bruger en prescaler pÃ¥ 1/8 for at holde den under dens ADC converterns maksimale clock frekvens pÃ¥ 200 kHz
 	OUT ADCSR, R16
 
 
@@ -60,11 +60,11 @@ SETUP:
 
 	CBI ADCSR , ADIF ; clearer bit
 
-	IN R16, ADCL ; gemmer adc værdi
+	IN R16, ADCL ; gemmer adc vÃ¦rdi
 	IN R16, ADCH
 
 	//LDI TestReg, 155
-	OUT UDR, R16 ; smider værdi ind i kommunikations registeret
+	OUT UDR, R16 ; smider vÃ¦rdi ind i kommunikations registeret
 
 	RJMP MAINLOOP
 
