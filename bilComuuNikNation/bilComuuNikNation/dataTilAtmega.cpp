@@ -49,10 +49,21 @@ int main()
 
 		//hvis input er tal, send tal ellers send char array
 		if (number) {
-			sendInt(serial, stoi(input));
-			Sleep(100);
-			serial.read(buff, 1);
-			std::cout << "read from atmega: " << (int)buff[0];
+			if (input.length() == 8) {
+				int num;
+				num = std::stoi(input);
+				num = convertBinaryToDecimal(num);
+				sendInt(serial, num);
+				Sleep(100);
+				serial.read(buff, 1);
+				std::cout << "read from atmega: " << (int)buff[0];
+			}
+			else {
+				sendInt(serial, stoi(input));
+				Sleep(100);
+				serial.read(buff, 1);
+				std::cout << "read from atmega: " << (int)buff[0];
+			}
 		}
 		else {
 			sendStr(serial, input);
@@ -87,6 +98,19 @@ void sendInt(SerialPort &serial, int data) {
 		output[0] = static_cast<char>(data);
 		serial.write(output, 1);
 	}
+}
+
+int convertBinaryToDecimal(long n)
+{
+	int decimalNumber = 0, i = 0, remainder;
+	while (n != 0)
+	{
+		remainder = n % 10;
+		n /= 10;
+		decimalNumber += remainder * pow(2, i);
+		++i;
+	}
+	return decimalNumber;
 }
 
 void sendStr(SerialPort &serial, std::string data) {

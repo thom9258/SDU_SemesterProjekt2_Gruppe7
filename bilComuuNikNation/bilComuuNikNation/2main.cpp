@@ -12,30 +12,25 @@ using namespace std;
 using namespace rwhw;
 
 
-int andet()
+int main()
 {
 	SerialPort serial;
 	serial.open("COM4", SerialPort::Baud9600);
-
+	ofstream file;
+	file.open ("jaDetVedJegIkke.csv");
 	// Flush
 	serial.clean();
 
 	for (unsigned char i = 0; i < 255; ++i) {
-		char c[1];
-		c[0] = '+';//static_cast<char>(i);
-		serial.write(c, 1);
-#ifdef _WIN32
 		Sleep(100);
-#else
-		sleep(0.1);
-#endif
-		char buf[128];
+		char buf[1];
 		serial.read(buf, 1);
 		//std::cout << (int) buf[0] << "\t" << (int) buf[1] << "\t" << (int) buf[2] << std::endl;
-		std::cout << static_cast<int>(buf[0]) << std::endl;
+		file << buf << "; ";
 	}
 
 	serial.close();
+	file.close();
 	return 0;
 }
 
