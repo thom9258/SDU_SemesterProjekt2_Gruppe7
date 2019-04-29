@@ -52,7 +52,7 @@ int main()
 			if (input.length() == 8) {
 				int num;
 				num = std::stoi(input);
-				num = convertBinaryToDecimal(num);
+				//num = convertBinaryToDecimal(num);
 				sendInt(serial, num);
 				Sleep(100);
 				serial.read(buff, 1);
