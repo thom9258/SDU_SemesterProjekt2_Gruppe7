@@ -18,7 +18,7 @@ using namespace rwhw;
 void sendStr(SerialPort &serial, std::string data);
 void sendInt(SerialPort &serial, int data);
 
-int main()
+int notmain()
 {
     SerialPort serial;
     serial.open("COM4", SerialPort::Baud9600);

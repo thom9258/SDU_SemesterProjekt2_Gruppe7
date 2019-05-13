@@ -26,9 +26,6 @@
     <ClCompile Include="dataTilAtmega.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\..\claus%27 PC\source\repos\SDU_SemesterProjekt2_Gruppe7\bilComuuNikNation\bilComuuNikNation\2main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="2main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
