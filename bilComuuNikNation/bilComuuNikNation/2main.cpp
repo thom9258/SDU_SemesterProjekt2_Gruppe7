@@ -14,7 +14,7 @@ using namespace std;
 using namespace rwhw;
 
 
-int main()
+int main2()
 {
 	unsigned int tries = 0;
 	std::cerr.setstate(std::ios_base::failbit); //disable std::cerr
