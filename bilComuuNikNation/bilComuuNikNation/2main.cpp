@@ -16,14 +16,24 @@ using namespace rwhw;
 
 int main()
 {
-	int tries = 0;
+	unsigned int tries = 0;
+	std::cerr.setstate(std::ios_base::failbit); //disable std::cerr
 
 	SerialPort serial;
 	std::string comPort = "COM10";
-	std::cout << "trying to connect  \n ";
-	while (!serial.open(comPort, SerialPort::Baud9600)) {
-		std::cout << "\n tried " << ++tries << " times\n ";
+
+
+	std::cout << "trying to connect  \n";
+	while (!serial.open(comPort, SerialPort::Baud9600, SerialPort::Data8, SerialPort::None, SerialPort::Stop1_0)) {
+		++tries;
+		if (tries > 65533) {
+			std::cout << "could not connect\n";
+			break;
+		}
 	}
+
+	std::cerr.clear(); //enable std::cer
+
 	ofstream file;
 	std::string filename;
 	int seconds;
