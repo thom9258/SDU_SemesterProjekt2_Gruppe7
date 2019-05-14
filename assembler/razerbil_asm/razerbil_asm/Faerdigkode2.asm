@@ -21,6 +21,9 @@
 	.def fastDrive = R22
 	.def slowDrive = R23
 	.def maalReg = R24
+	.def distReg = R25
+	.def pushAmountRegL = R28
+	.def pushAmountRegH = R29
 
 	; IKKE BRUG R26 og 27
 	ldi	fastDrive, 130
@@ -98,6 +101,16 @@
 
 
 HjulInterrupt:
+	;if disreg != 0; distreg--
+	ldi CompReg, 0
+	cpse distReg, CompReg ; compare skip if equal
+	dec distReg
+
+	cpi maalReg, 1
+	breq HjulInterrupt2
+	reti
+
+HjulInterrupt2:
 	CLR CompReg
 	IN AdcReg, ADCL
 	IN AdcReg, ADCH
@@ -131,6 +144,7 @@ MaalInterrupt:
 	RETI
 
 ; -------------------------------- MAINRUNDE0 --------------------------------------------------------
+
 MAINRUNDE0:
 	CPI	maalREG, 1
 	BREQ MAINRUNDE1
@@ -139,8 +153,8 @@ MAINRUNDE0:
 
 ; -------------------------------- MAINRUNDE1 --------------------------------------------------------
 MAINRUNDE1:
-	CPI	maalREG, 2
-	BRSH MAINRUNDEX
+	//CPI	maalREG, 2
+	//BRSH MAINRUNDEX
 	; Hvis straightReg != 0, så brancher vi til curvePUSH
 	CPI	straightReg, 0
 	BRNE curvePUSH
@@ -167,6 +181,7 @@ MAINRUNDE1:
 		; Hvis vi ikke drejer pusher vi vores straightReg til Queuen/stack
 		PUSH	straightReg
 		clr		straightReg
+		adiw	pushAmountRegH:pushAmountRegL, 1
 		RJMP	MAINRUNDE1
 
 	curvePUSH:
@@ -187,10 +202,37 @@ MAINRUNDE1:
 		curvePUSH2:
 		PUSH	curveReg
 		clr		curveReg
+		adiw	pushAmountRegH:pushAmountRegL, 1
 		rjmp	MAINRUNDE1
 
 ; -------------------------------- MAINRUNDEX --------------------------------------------------------
 MAINRUNDEX:
+;
+	;call dequeue if distreg = 0 (det er den også ved start)
+	cpi		distReg, 0
+	breq	dequeue
+	backFromDequeue:
 
-	RJMP MAINRUNDEX
+	RJMP	MAINRUNDEX
 
+
+
+dequeue:
+	LD		distReg, x
+	subi	XL, 1
+	sbci	XH, 0 ; may cause error!!! \(X_X)/
+	
+	;if  XL,XH  <  ramend-pushAmountReg; goto reset deququ
+	subi	pushAmountRegL, low(RAMEND)
+	sbci	pushAmountRegH, high(RAMEND)
+
+	cp		XL, pushAmountRegL
+	cpc		XH, pushAmountRegH
+	brlo	resetDequeue
+
+	rjmp	backFromDequeue
+
+resetDequeue:
+	ldi XL, low(RAMEND)
+	ldi XH, High(RAMEND)
+	rjmp MAINRUNDEX
