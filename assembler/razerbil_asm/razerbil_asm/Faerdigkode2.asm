@@ -49,15 +49,15 @@
 	OUT		UCSRA,	R16	
 
 
-	;Slå seriel kommunikation og recieve interrupts til
+	;SlÃ¥ seriel kommunikation og recieve interrupts til
 	LDI		R16,	(1<<RXEN)|(1<<TXEN)
 	OUT		UCSRB,	R16
 
-	;Brug UCSRC, sæt frame size = 8
+	;Brug UCSRC, sÃ¦t frame size = 8
 	LDI		R16,	(1<<URSEL)|(1<<UCSZ1)|(1<<UCSZ0)
 	OUT		UCSRC,	R16
 
-	;Sæt baud rate = 9600 
+	;SÃ¦t baud rate = 9600 
 	LDI		R16,	12		;UBRR LSB
 	OUT		UBRRL,	R16
 
@@ -68,11 +68,11 @@
 	ldi		r16,	0x00
 	out		ddra,	r16
 
-	LDI R16, 0b11100001		; intern ref spænding, auto trigger til, gemmer 8 msb bits, læs fra PA1
+	LDI R16, 0b11100001		; intern ref spÃ¦nding, auto trigger til, gemmer 8 msb bits, lÃ¦s fra PA1
 	OUT ADMUX, R16
 
-	LDI R16, 0b11100011		; enable adc, start adc, autotrigger, prescaler på 1/8
-	OUT ADCSR, R16			; vi bruger en prescaler på 1/8 for at holde den under dens ADC converterns maksimale clock frekvens på 200 kHz
+	LDI R16, 0b11100011		; enable adc, start adc, autotrigger, prescaler pÃ¥ 1/8
+	OUT ADCSR, R16			; vi bruger en prescaler pÃ¥ 1/8 for at holde den under dens ADC converterns maksimale clock frekvens pÃ¥ 200 kHz
 
 	
 	; enable alle hardware interrupts
@@ -81,8 +81,8 @@
 	
 
 
-	; PWM opsætning
-	ldi r16, 0b01100001		; phase korrekt, non inverterende, prescaler på 1 
+	; PWM opsÃ¦tning
+	ldi r16, 0b01100001		; phase korrekt, non inverterende, prescaler pÃ¥ 1 
 	out tccr2, r16
 
 	MOV R16, slowDrive
@@ -141,12 +141,12 @@ MAINRUNDE0:
 MAINRUNDE1:
 	CPI	maalREG, 2
 	BRSH MAINRUNDEX
-	; Hvis straightReg != 0, så brancher vi til curvePUSH
+	; Hvis straightReg != 0, sÃ¥ brancher vi til curvePUSH
 	CPI	straightReg, 0
 	BRNE curvePUSH
 	
 
-	; Hvis curveReg != 0, så brancher vi til straightPUSH
+	; Hvis curveReg != 0, sÃ¥ brancher vi til straightPUSH
 	CPI	curveReg, 0
 	BRNE straightPUSH
 
@@ -183,7 +183,7 @@ MAINRUNDE1:
 		
 		rjmp MAINRUNDE1
 
-		; ellers pusher vi curveReg på Queuen
+		; ellers pusher vi curveReg pÃ¥ Queuen
 		curvePUSH2:
 		PUSH	curveReg
 		clr		curveReg
