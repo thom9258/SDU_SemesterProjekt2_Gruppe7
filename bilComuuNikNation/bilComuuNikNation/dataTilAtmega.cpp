@@ -18,76 +18,15 @@ using namespace rwhw;
 void sendStr(SerialPort &serial, std::string data);
 void sendInt(SerialPort &serial, int data);
 
-//fucking SDU's diffinitioner på ting
-rwhw::SerialPort::Baudrate baud[8] = {
-	SerialPort::Baud1200, 
-	SerialPort::Baud2400,
-	SerialPort::Baud4800,
-	SerialPort::Baud9600,
-	SerialPort::Baud19200,
-	SerialPort::Baud38400,
-	SerialPort::Baud57600,
-	SerialPort::Baud115200
-};
-rwhw::SerialPort::DataBits databit[4] = {
-	SerialPort::Data5,
-	SerialPort::Data6,
-	SerialPort::Data7,
-	SerialPort::Data8
-};
-rwhw::SerialPort::Parity parity[6] = {
-	SerialPort::Even,
-	SerialPort::Mark,
-	SerialPort::Odd,
-	SerialPort::None,
-	SerialPort::Odd,
-	SerialPort::Space
-};
-rwhw::SerialPort::StopBits stopbit[3] = {
-	SerialPort::Stop1_0,
-	SerialPort::Stop1_5,
-	SerialPort::Stop2_0
-};
-
-int main()
+int data2atmega()
 {
 	
     SerialPort serial;
-
-	std::cerr.setstate(std::ios_base::failbit); //disable std::cerr
-	std::string comPort;
-	unsigned long tries = 0;
-	std::cout << "trying to connect\n";
-	for (int sb = 0; sb <= 3; sb++) {
-		for (int par = 0; par <= 6; par++) {
-			for (int db = 0; db <= 4; db++) {
-				for (int bo = 0; bo <= 8; bo++) {
-					for (int port = 0; port <= 20; port++) {
-						int tries = 0;
-						while (tries++ < 1000) {
-							if (serial.open(comPort, baud[bo], databit[db], parity[par], stopbit[sb])) {
-								std::cout << "foud connection at" << comPort << bo << db << par;
-								goto Freedome;
-							}
-						}
-						//std::cout << "trying new port \n";
-					}
-					std::cout << "trying new baudrate \n";
-				}
-				std::cout << "trying new databit \n";
-			}
-			std::cout << "trying new parity \n";
-		}
-		std::cout << "trying new stopbit \n";
-	}
-	Freedome:
-	std::cerr.clear(); //enable std::cer
-
 	std::string input;
 	char output[128], buff[128];
 	int inputLength;
 	bool number;
-
+	serial.open("COM12", SerialPort::Baud9600);
     // Flush
 	while (true) {
 		serial.clean();

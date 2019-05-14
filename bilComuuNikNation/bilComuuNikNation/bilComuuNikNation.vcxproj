@@ -23,7 +23,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="2main.cpp" />
+    <ClCompile Include="BruteforceSerial.cpp" />
     <ClCompile Include="dataTilAtmega.cpp" />
+    <ClCompile Include="SDU.cpp" />
     <ClCompile Include="SerialPort.cpp" />
   </ItemGroup>
   <ItemGroup>
