@@ -3,7 +3,7 @@
 .org	0x00
 	rjmp	SETUP
 	
-.org 0x04
+.org 0x02 ; er ændret fra 0x8 til 0x2 fordi der ikke er interrupt på 0x8
 	rjmp	MaalInterrupt
 
 .org 0x06
