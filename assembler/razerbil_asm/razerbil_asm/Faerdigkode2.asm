@@ -52,7 +52,7 @@
 	OUT		UCSRA,	R16	
 
 
-	;Slå seriel kommunikation og recieve interrupts til
+	;Slå seriel kommunikation transmitter og recieve til
 	LDI		R16,	(1<<RXEN)|(1<<TXEN)
 	OUT		UCSRB,	R16
 
