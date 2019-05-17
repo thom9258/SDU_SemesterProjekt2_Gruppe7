@@ -2,12 +2,12 @@
 
 .org	0x00
 	rjmp	SETUP
+	
+.org 0x04
+	rjmp	MaalInterrupt
 
 .org 0x06
 	rjmp	HjulInterrupt
-
-.org 0x08
-	rjmp	MaalInterrupt
 
 .org	0x2A
 
