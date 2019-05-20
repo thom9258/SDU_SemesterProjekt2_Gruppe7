@@ -153,6 +153,10 @@ MAINRUNDE0:
 
 ; -------------------------------- MAINRUNDE1 --------------------------------------------------------
 MAINRUNDE1:
+
+	; SKAL MÅSKE SENDE NOGET TIL COMPUTEREN FOR TEST FORMÅL
+
+
 	//CPI	maalREG, 2
 	//BRSH MAINRUNDEX
 	; Hvis straightReg != 0, så brancher vi til curvePUSH
@@ -212,7 +216,7 @@ MAINRUNDEX:
 	cpi		distReg, 0
 	breq	dequeue
 	backFromDequeue:
-
+	; MANGLER AT SKIFTE MELLEM HURTIG OG LANGSOM HASTIGHED
 	RJMP	MAINRUNDEX
 
 
