@@ -1,4 +1,11 @@
-.include "m32adef.inc"
+;
+; FuldstændigKode_v2.asm
+;
+; Created: 20/05/2019 10:08:25 AM
+; Author : Thomas Alexgaard
+;
+
+.include "m32def.inc"
 
 .org	0x00
 	rjmp	SETUP
@@ -20,14 +27,16 @@
 	.def sendReg = R21
 	.def fastDrive = R22
 	.def slowDrive = R23
+
+	./*equ fastDrive = 130
+	.equ slowDrive = 70*/
+
 	.def maalReg = R24
 	.def distReg = R25
 	.def pushAmountRegL = R28
 	.def pushAmountRegH = R29
 
-	; IKKE BRUG R26 og 27
-	ldi	fastDrive, 130
-	ldi	slowDrive, 75
+
 
 	.equ lowT = 55
 	.equ highT = 125
@@ -35,6 +44,12 @@
 	; -------------------------------------------------------SETUP START
 	
 	SETUP:
+	; IKKE BRUG R26 og 27
+	ldi	fastDrive, 130
+	ldi	slowDrive, 60
+
+
+
 	LDI sendReg, 0
 
 	; Stack pointer setup
@@ -68,7 +83,7 @@
 	; ADC Setup
 
 	;porta setup til ADC
-	ldi		r16,	0x00
+	ldi		r16,	0b01000000
 	out		ddra,	r16
 
 	LDI R16, 0b11100001		; intern ref spænding, auto trigger til, gemmer 8 msb bits, læs fra PA1
@@ -78,27 +93,44 @@
 	OUT ADCSR, R16			; vi bruger en prescaler på 1/8 for at holde den under dens ADC converterns maksimale clock frekvens på 200 kHz
 
 	
-	; enable alle hardware interrupts
-	LDI R16, (1<<INT0) | (1<<INT1) | (1<<INT2)
+	; enable hardware interrupts
+	LDI R16, (1<<INT0) | (1<<INT2)
 	OUT GICR, R16
 	
-
 
 	; PWM opsætning
 	ldi r16, 0b01100001		; phase korrekt, non inverterende, prescaler på 1 
 	out tccr2, r16
-
-	MOV R16, slowDrive
-
+	
+	;ldi r16, slowDrive
+	MOV r16, slowDrive
 	out	OCR2, R16 
+	call delay_nsec
 	; port d setup
 
-	ldi R16, 0xFF
+	ldi R16, 0b11111011
 	OUT ddrd, R16
 	Out PORTD, R16
 	SEI
-	rjmp MAINRUNDE0
 
+	rjmp MAINRUNDE0
+		;Delay, opladning af kondensator
+	DELAY_NSEC:				; For CLK(CPU) = 1 MHz
+    LDI     r16,   5*8		; this is n*8 so n is the amount of seconds for the delay
+Delay1:
+    LDI     r18,   125		; One clock cycle
+Delay2:
+    LDI     r19,   250      ; One clock cycle
+Delay3:
+    DEC     r19             ; One clock cycle
+    NOP                     ; One clock cycle
+    BRNE    Delay3          ; Two clock cycles when jumping to Delay3, 1 clock when continuing to DEC
+
+    DEC     r18             ; One clock cycle
+    BRNE    Delay2          ; Two clock cycles when jumping to Delay2, 1 clock when continuing to DEC
+
+    DEC     r16             ; One clock Cycle
+    BRNE    Delay1          ; Two clock cycles when jumping to Delay1, 1 clock when continuing to RET
 
 HjulInterrupt:
 	;if disreg != 0; distreg--
@@ -141,24 +173,32 @@ HjulInterrupt2:
 ; -------------------------------- MaalInterrupt --------------------------------------------------------
 MaalInterrupt:
 	inc maalReg
+	ldi r16, (1<< pa6)
+	out porta, r16
 	RETI
 
 ; -------------------------------- MAINRUNDE0 --------------------------------------------------------
 
 MAINRUNDE0:
-	CPI	maalREG, 1
+	CPI	maalREG, 2
 	BREQ MAINRUNDE1
 
 	RJMP MAINRUNDE0
 
 ; -------------------------------- MAINRUNDE1 --------------------------------------------------------
 MAINRUNDE1:
-
 	; SKAL MÅSKE SENDE NOGET TIL COMPUTEREN FOR TEST FORMÅL
+	mov r16, slowDrive
+	out	ocr2, r16
 
+vent:
+sbic	UCSRA,	5	;skip hvis der der ikke er nooget i UDR
+rjmp	vent
+out	UDR,	maalReg
 
-	//CPI	maalREG, 2
-	//BRSH MAINRUNDEX
+	CPI	maalREG, 2
+	BRSH MAINRUNDEX
+
 	; Hvis straightReg != 0, så brancher vi til curvePUSH
 	CPI	straightReg, 0
 	BRNE curvePUSH
@@ -182,6 +222,10 @@ MAINRUNDE1:
 		CP AdcReg, CompReg		; compares compare register with adc input register
 		BRSH MAINRUNDE1
 
+		SBIS UCSRA, 5
+		OUT UDR, straightReg
+
+
 		; Hvis vi ikke drejer pusher vi vores straightReg til Queuen/stack
 		PUSH	straightReg
 		clr		straightReg
@@ -204,14 +248,23 @@ MAINRUNDE1:
 
 		; ellers pusher vi curveReg på Queuen
 		curvePUSH2:
+
+		SBIS UCSRA, 5
+		OUT UDR, curveReg
+
 		PUSH	curveReg
 		clr		curveReg
 		adiw	pushAmountRegH:pushAmountRegL, 1
 		rjmp	MAINRUNDE1
+		
 
 ; -------------------------------- MAINRUNDEX --------------------------------------------------------
 MAINRUNDEX:
 ;
+/*	LDI R16, (1 << PA6)
+	OUT PORTA, R16*/
+
+
 	;call dequeue if distreg = 0 (det er den også ved start)
 	cpi		distReg, 0
 	breq	dequeue
@@ -220,8 +273,18 @@ MAINRUNDEX:
 	RJMP	MAINRUNDEX
 
 
-
 dequeue:
+
+	; hvis pop, skift hastighedsregister
+	IN CompReg, OCR2
+	CP CompReg, fastDrive
+	BREQ SetSlow
+
+	CP CompReg, slowDrive
+	BREQ SetFast
+	returnDequeue:
+
+
 	LD		distReg, x
 	subi	XL, 1
 	sbci	XH, 0 ; may cause error!!! \(X_X)/
@@ -240,3 +303,15 @@ resetDequeue:
 	ldi XL, low(RAMEND)
 	ldi XH, High(RAMEND)
 	rjmp MAINRUNDEX
+
+
+SetFast:
+mov r16, fastDrive
+OUT OCR2, r16
+RJMP returnDequeue
+
+
+SetSlow:
+mov r16, slowDrive
+OUT OCR2, r16
+RJMP returnDequeue
